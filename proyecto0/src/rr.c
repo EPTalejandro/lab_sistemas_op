@@ -40,10 +40,11 @@ void rr_encolar(ColaRR *cola, int pid, const char *nombre, int rafagas) {
 
 int rr_tick(ColaRR *cola, int tick) {
     if(cola -> ultimo == NULL){
-        printf("Cola vacía.");
+        printf("Cola vacía.\n");
+        return 0;
     }
     Nodo *actual = cola->ultimo->siguiente;
-    printf("Tick %d: ejecutanto %s (PID %d) — rafagas restantes: %d\n", tick,actual->nombre,actual->pid,actual->rafagas-1);
+    printf("Tick %d: ejecutando %s (PID %d) — rafagas restantes: %d\n", tick,actual->nombre,actual->pid,actual->rafagas-1);
     actual -> rafagas--;
     if (actual->rafagas==0){
         printf("  -> %s (PID %d) terminó.\n",actual->nombre,actual->pid);
@@ -80,11 +81,11 @@ void rr_liberar(ColaRR *cola) {
 
 void rr_imprimir(const ColaRR *cola) {
     if(cola -> ultimo == NULL){
-        printf("cola vacia\n");
+        printf("  (cola vacía)\n");
     }
     Nodo *actual = cola -> ultimo -> siguiente;
     while (actual != cola -> ultimo){
-        printf("PID %d %s %d\n",actual->pid,actual->nombre,actual->rafagas);
+        printf("  PID %d [%s] rafagas=%d\n",actual->pid,actual->nombre,actual->rafagas);
         actual = actual ->siguiente;
     }
     printf("PID %d %s %d\n",actual->pid,actual->nombre,actual->rafagas);   
