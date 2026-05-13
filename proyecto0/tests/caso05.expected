@@ -1,0 +1,8 @@
+Tick 1: ejecutando vim (PID 7) — rafagas restantes: 1
+Tick 2: ejecutando vim (PID 7) — rafagas restantes: 0
+  -> vim (PID 7) terminó.
+  PID 8 [gcc] rafagas=2
+Tick 3: ejecutando gcc (PID 8) — rafagas restantes: 1
+Tick 4: ejecutando gcc (PID 8) — rafagas restantes: 0
+  -> gcc (PID 8) terminó.
+Cola vacía.

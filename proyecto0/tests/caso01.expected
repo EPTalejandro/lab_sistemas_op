@@ -1,0 +1,4 @@
+Tick 1: ejecutando init (PID 1) — rafagas restantes: 2
+Tick 2: ejecutando init (PID 1) — rafagas restantes: 1
+Tick 3: ejecutando init (PID 1) — rafagas restantes: 0
+  -> init (PID 1) terminó.

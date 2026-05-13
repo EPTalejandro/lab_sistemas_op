@@ -1,0 +1,5 @@
+ENCOLAR 1 init 3
+TICK
+TICK
+TICK
+FIN

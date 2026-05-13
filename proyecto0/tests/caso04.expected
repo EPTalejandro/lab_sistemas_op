@@ -1,0 +1,9 @@
+Tick 1: ejecutando systemd (PID 100) — rafagas restantes: 0
+  -> systemd (PID 100) terminó.
+Tick 2: ejecutando cron (PID 200) — rafagas restantes: 2
+Tick 3: ejecutando dbus (PID 300) — rafagas restantes: 1
+Tick 4: ejecutando cron (PID 200) — rafagas restantes: 1
+Tick 5: ejecutando dbus (PID 300) — rafagas restantes: 0
+  -> dbus (PID 300) terminó.
+Tick 6: ejecutando cron (PID 200) — rafagas restantes: 0
+  -> cron (PID 200) terminó.

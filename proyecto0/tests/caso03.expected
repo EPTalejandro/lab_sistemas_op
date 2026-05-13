@@ -1,0 +1,8 @@
+  PID 5 [nginx] rafagas=1
+  PID 6 [sshd] rafagas=2
+Tick 1: ejecutando nginx (PID 5) — rafagas restantes: 0
+  -> nginx (PID 5) terminó.
+Tick 2: ejecutando sshd (PID 6) — rafagas restantes: 1
+Tick 3: ejecutando sshd (PID 6) — rafagas restantes: 0
+  -> sshd (PID 6) terminó.
+Cola vacía.

@@ -1,0 +1,6 @@
+Tick 1: ejecutando bash (PID 10) — rafagas restantes: 1
+Tick 2: ejecutando python (PID 20) — rafagas restantes: 1
+Tick 3: ejecutando bash (PID 10) — rafagas restantes: 0
+  -> bash (PID 10) terminó.
+Tick 4: ejecutando python (PID 20) — rafagas restantes: 0
+  -> python (PID 20) terminó.
