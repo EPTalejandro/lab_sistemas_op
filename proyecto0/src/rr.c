@@ -88,5 +88,5 @@ void rr_imprimir(const ColaRR *cola) {
         printf("  PID %d [%s] rafagas=%d\n",actual->pid,actual->nombre,actual->rafagas);
         actual = actual ->siguiente;
     }
-    printf("PID %d %s %d\n",actual->pid,actual->nombre,actual->rafagas);   
+    printf("  PID %d [%s] rafagas=%d\n",actual->pid,actual->nombre,actual->rafagas);   
 }
