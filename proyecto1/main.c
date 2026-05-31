@@ -36,6 +36,15 @@
 /*                                                                      */
 /*  Parámetro: fd_lectura — extremo de lectura del pipe.               */
 /* ================================================================== */
+
+typedef struct
+{
+    int             coincidencias;  // contador global
+    int             fd_escritura;       // extremo de escritura del pipe
+    pthread_mutex_t mutex;              // protege contador y write
+} Resultado;
+
+
 static void ejecutar_monitor(int fd_lectura) {
 
     /* TODO-M (Monitor)
@@ -103,6 +112,10 @@ int main(int argc, char *argv[]) {
      *
      * ~2 líneas de código.
      */
+
+    Resultado res;
+    grep_init(&res, mario[1]);
+    
 
     /* ── TODO-5: Preparar argumentos y lanzar hilos ──────────────────
      *
