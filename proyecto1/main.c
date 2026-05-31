@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     id = fork();
     if(id == -1){
         perror("fork");
-        return -1;
+        return 1;
     }
     else if (id == 0){
         close(mario[1]);
