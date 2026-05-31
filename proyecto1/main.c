@@ -37,14 +37,6 @@
 /*  Parámetro: fd_lectura — extremo de lectura del pipe.               */
 /* ================================================================== */
 
-typedef struct
-{
-    int             coincidencias;  // contador global
-    int             fd_escritura;       // extremo de escritura del pipe
-    pthread_mutex_t mutex;              // protege contador y write
-} Resultado;
-
-
 static void ejecutar_monitor(int fd_lectura) {
 
     /* TODO-M (Monitor)
@@ -100,10 +92,7 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
     close(mario[0]);
-
-
-    
-    
+     
     Resultado res;
     grep_init(&res,mario[1]);
     pthread_t hilos[MAX_HILOS];
