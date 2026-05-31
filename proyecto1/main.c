@@ -38,23 +38,13 @@
 /* ================================================================== */
 
 static void ejecutar_monitor(int fd_lectura) {
+    char buf[MAX_RUTA + MAX_LINEA + 64];
+    ssize_t n;
 
-    /* TODO-M (Monitor)
-     * ----------------
-     * En un bucle, lee bloques del pipe con read() y escríbelos
-     * directamente a STDOUT_FILENO con write().
-     * El bucle termina cuando read() retorna 0 (EOF) o negativo (error).
-     * Al salir del bucle, cierra fd_lectura.
-     *
-     * Pista:
-     *   char buf[MAX_RUTA + MAX_LINEA + 64];
-     *   ssize_t n;
-     *   while ((n = read(fd_lectura, buf, sizeof(buf))) > 0)
-     *       write(STDOUT_FILENO, buf, n);
-     *
-     * ~5 líneas de código.
-     */
-
+    while ((n = read(fd_lectura, buf, sizeof(buf))) > 0){
+        write(STDOUT_FILENO, buf, n);
+    }
+    close(fd_lectura);
 }
 
 /* ================================================================== */
@@ -97,6 +87,7 @@ int main(int argc, char *argv[]) {
     grep_init(&res,mario[1]);
     pthread_t hilos[MAX_HILOS];
     ArgsHilo  args[MAX_HILOS];
+
     for(int i=0;i<n_arch;i++){
         args[i].id_hilo = i;
         strncpy(args[i].ruta,argv[i+2],MAX_RUTA-1);
