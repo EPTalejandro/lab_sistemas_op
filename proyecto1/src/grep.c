@@ -15,9 +15,13 @@
  */
 
 #include "../include/grep.h"
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
 
 /* ================================================================== */
-/*  grep_init                                                           */
+/* grep_init                                                         */
 /* ================================================================== */
 void grep_init(Resultado *res, int fd) {
     res->total_coincidencias = 0;
@@ -26,68 +30,49 @@ void grep_init(Resultado *res, int fd) {
 }
 
 /* ================================================================== */
-/*  grep_buscar                                                         */
-/*  Función ejecutada por cada hilo.                                   */
+/* grep_buscar                                                       */
+/* Función ejecutada por cada hilo.                                  */
 /* ================================================================== */
 void *grep_buscar(void *arg) {
-    /*
-     * TODO-B  (~25 líneas)
-     * ---------------------
-     * PASO 1 — Cast del argumento:
-     *   ArgsHilo *args = (ArgsHilo *)arg;
-     *
-     * PASO 2 — Abrir el archivo:
-     *   FILE *f = fopen(args->ruta, "r");
-     *   Si f == NULL:
-     *     fprintf(stderr, "[Hilo %d] Error: no se pudo abrir %s\n",
-     *             args->id_hilo, args->ruta);
-     *     return NULL;
-     *
-     * PASO 3 — Leer línea por línea:
-     *   char linea[MAX_LINEA];
-     *   while (fgets(linea, sizeof(linea), f)) {
-     *
-     * PASO 4 — Detectar coincidencia:
-     *     if (strstr(linea, args->palabra) != NULL) {
-     *
-     * PASO 5 — Quitar el '\n' final:
-     *       linea[strcspn(linea, "\n")] = '\0';
-     *
-     * PASO 6 — Sección crítica (mutex protege contador Y write):
-     *       pthread_mutex_lock(&args->res->mutex);
-     *
-     *           args->res->total_coincidencias++;
-     *
-     *           char msg[MAX_RUTA + MAX_LINEA + 64];
-     *           int  n = snprintf(msg, sizeof(msg),
-     *                        "[Hilo %d] %s: %s\n",
-     *                        args->id_hilo,
-     *                        args->ruta,
-     *                        linea);
-     *           write(args->res->pipe_escritura, msg, n);
-     *
-     *       pthread_mutex_unlock(&args->res->mutex);
-     *     }  // fin if strstr
-     *   }    // fin while fgets
-     *
-     * PASO 7 — Cerrar y retornar:
-     *   fclose(f);
-     *   return NULL;
-     */
-    return NULL; /* ← quitar cuando implementes */
+    ArgsHilo *args = (ArgsHilo *)arg;
+
+    FILE *f = fopen(args->ruta, "r");
+    if (f == NULL) {
+        fprintf(stderr, "[Hilo %d] Error: no se pudo abrir %s\n",
+                args->id_hilo, args->ruta);
+        return NULL;
+    }
+
+    char linea[MAX_LINEA];
+    while (fgets(linea, sizeof(linea), f)) {
+
+        if (strstr(linea, args->palabra) != NULL) {
+
+            linea[strcspn(linea, "\n")] = '\0';
+
+            pthread_mutex_lock(&args->res->mutex);
+            args->res->total_coincidencias++;
+
+            char msg[MAX_RUTA + MAX_LINEA + 64];
+            int n = snprintf(msg, sizeof(msg),
+                             "[Hilo %d] %s: %s\n",
+                             args->id_hilo,
+                             args->ruta,
+                             linea);
+            
+            write(args->res->pipe_escritura, msg, n);
+
+            pthread_mutex_unlock(&args->res->mutex);
+        }
+    }
+
+    fclose(f);
+    return NULL;
 }
 
 /* ================================================================== */
-/*  grep_destruir                                                       */
+/* grep_destruir                                                     */
 /* ================================================================== */
 void grep_destruir(Resultado *res) {
-    /*
-     * TODO-C  (~1 línea)
-     * ------------------
-     * Destruye el mutex:
-     *   pthread_mutex_destroy(&res->mutex);
-     *
-     * No uses free(): res vive en el stack de main.c.
-     * No cierres el pipe: lo hace main.c en TODO-7.
-     */
+    pthread_mutex_destroy(&res->mutex);
 }
