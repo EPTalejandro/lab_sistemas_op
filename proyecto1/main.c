@@ -104,88 +104,29 @@ int main(int argc, char *argv[]) {
 
     
     
-    /* ── TODO-4: Inicializar la estructura compartida ────────────────
-     *
-     * Declara:   Resultado res;
-     * Llama a:   grep_init(&res, fds[1]);
-     *   (fds[1] es el fd de escritura que los hilos usarán)
-     *
-     * ~2 líneas de código.
-     */
-
     Resultado res;
-    grep_init(&res, mario[1]);
-    
-
-    /* ── TODO-5: Preparar argumentos y lanzar hilos ──────────────────
-     *
-     * Declara arrays:
-     *   pthread_t hilos[MAX_HILOS];
-     *   ArgsHilo  args[MAX_HILOS];
-     *
-     * Para i = 0 .. n_arch-1:
-     *   args[i].id_hilo = i;
-     *   strncpy(args[i].ruta,    argv[i+2], MAX_RUTA  - 1);
-     *   strncpy(args[i].palabra, palabra,   MAX_LINEA - 1);
-     *   args[i].res = &res;
-     *   pthread_create(&hilos[i], NULL, grep_buscar, &args[i]);
-     *     → Si pthread_create falla: perror("pthread_create")
-     *       (no es fatal; los demás hilos pueden continuar)
-     *
-     * ~10 líneas de código.
-     */
-
+    grep_init(&res,mario[1]);
     pthread_t hilos[MAX_HILOS];
     ArgsHilo  args[MAX_HILOS];
-
-    for (int i = 0; i < MAX_HILOS; i++){
-        args[i].id_hilo  = i;
-        strncpy(args[i].ruta,    argv[i+2], MAX_RUTA  - 1);
-        strncpy(args[i].palabra, palabra,   MAX_LINEA - 1);
-        args[i].res = &res;
-        if( (pthread_create(&hilos[i], NULL, grep_buscar, &args[i])) > 0){
+    for(int i=0;i<n_arch;i++){
+        args[i].id_hilo = i;
+        strncpy(args[i].ruta,argv[i+2],MAX_RUTA-1);
+        strncpy(args[i].palabra,palabra,MAX_LINEA-1);
+        args[i].res= &res;
+        if(pthread_create(&hilos[i], NULL, grep_buscar, &args[i])!=0){
             perror("pthread_create");
         }
     }
 
+    for(int i=0;i<n_arch;i++){
+        pthread_join(hilos[i],NULL);
+    }
 
-    /* ── TODO-6: Esperar a todos los hilos ───────────────────────────
-     *
-     * Para i = 0 .. n_arch-1:
-     *   pthread_join(hilos[i], NULL);
-     *
-     * ~3 líneas de código.
-     */
+    close(mario[1]);
+    wait(NULL);
 
-    for (int i = 0; i < NUM_HILOS; i++)
-        pthread_join(hilos[i], NULL);
+    printf("---\nTotal de coincidencias: %d\n", res.total_coincidencias);
+    grep_destruir(&res);
+    return(0);
 
-
-    /* ── TODO-7: Señalar EOF al monitor y esperar que termine ─────────
-     *
-     * Cierra fds[1]:
-     *   close(fds[1]);
-     *   → Esto genera EOF en el extremo de lectura del monitor.
-     *   → Si no lo cierras, el monitor espera para siempre (deadlock).
-     *
-     * Espera al proceso monitor:
-     *   wait(NULL);
-     *
-     * ~2 líneas de código.
-     */
-
-     wait(NULL);
-
-    /* ── TODO-8: Resultado final y limpieza ──────────────────────────
-     *
-     * Imprime:
-     *   printf("---\nTotal de coincidencias: %d\n", res.total_coincidencias);
-     *
-     * Llama a grep_destruir(&res).
-     * Retorna 0.
-     *
-     * ~3 líneas de código.
-     */
-
-    return 0; /* ← reemplazar cuando implementes TODO-8 */
 }
