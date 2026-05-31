@@ -20,22 +20,9 @@
 /*  grep_init                                                           */
 /* ================================================================== */
 void grep_init(Resultado *res, int fd) {
-    /*
-     * TODO-A  (~3 líneas)
-     * -------------------
-     * Inicializa los tres campos de *res:
-     *
-     *   res->total_coincidencias = 0;
-     *   res->pipe_escritura      = fd;
-     *
-     * Inicializa el mutex (elige una de las dos formas):
-     *
-     *   Opción 1 (macro):
-     *     res->mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
-     *
-     *   Opción 2 (función, más explícita):
-     *     pthread_mutex_init(&res->mutex, NULL);
-     */
+    res->total_coincidencias = 0;
+    res->pipe_escritura      = fd;
+    res->mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 }
 
 /* ================================================================== */
