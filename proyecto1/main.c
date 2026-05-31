@@ -21,6 +21,13 @@
  */
 
 #include "include/grep.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 /* ================================================================== */
 /*  ejecutar_monitor                                                    */
@@ -50,7 +57,7 @@ static void ejecutar_monitor(int fd_lectura) {
 }
 
 /* ================================================================== */
-/*  main                                                                */
+/*  main                                                              */
 /* ================================================================== */
 int main(int argc, char *argv[]) {
 
@@ -80,10 +87,13 @@ int main(int argc, char *argv[]) {
     }
     else if (id == 0){
         close(mario[1]);
+        ejecutar_monitor(mario[0]);
+        exit(0);
     }
-    else{
-        close(mario[0]);
-    }
+    close(mario[0]);
+
+
+    
     
     /* ── TODO-4: Inicializar la estructura compartida ────────────────
      *
@@ -112,6 +122,20 @@ int main(int argc, char *argv[]) {
      * ~10 líneas de código.
      */
 
+    pthread_t hilos[MAX_HILOS];
+    ArgsHilo  args[MAX_HILOS];
+
+    for (int i = 0; i < MAX_HILOS; i++){
+        args[i].id_hilo  = i;
+        strncpy(args[i].ruta,    argv[i+2], MAX_RUTA  - 1);
+        strncpy(args[i].palabra, palabra,   MAX_LINEA - 1);
+        args[i].res = &res;
+        if( (pthread_create(&hilos[i], NULL, grep_buscar, &args[i])) > 0){
+            perror("pthread_create");
+        }
+    }
+
+
     /* ── TODO-6: Esperar a todos los hilos ───────────────────────────
      *
      * Para i = 0 .. n_arch-1:
@@ -119,6 +143,10 @@ int main(int argc, char *argv[]) {
      *
      * ~3 líneas de código.
      */
+
+    for (int i = 0; i < NUM_HILOS; i++)
+        pthread_join(hilos[i], NULL);
+
 
     /* ── TODO-7: Señalar EOF al monitor y esperar que termine ─────────
      *
@@ -132,6 +160,8 @@ int main(int argc, char *argv[]) {
      *
      * ~2 líneas de código.
      */
+
+     wait(NULL);
 
     /* ── TODO-8: Resultado final y limpieza ──────────────────────────
      *

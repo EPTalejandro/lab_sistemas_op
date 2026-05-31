@@ -36,6 +36,10 @@ void grep_init(Resultado *res, int fd) {
      *   Opción 2 (función, más explícita):
      *     pthread_mutex_init(&res->mutex, NULL);
      */
+
+    res.coincidencias = 0;
+    res.fd_escritura      = mario[1];
+    pthread_mutex_init(&res.mutex, NULL);
 }
 
 /* ================================================================== */
