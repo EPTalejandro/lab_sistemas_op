@@ -54,56 +54,37 @@ static void ejecutar_monitor(int fd_lectura) {
 /* ================================================================== */
 int main(int argc, char *argv[]) {
 
-    /* ── TODO-1: Validar argumentos ──────────────────────────────────
-     *
-     * El programa necesita al menos 3 argumentos:
-     *   argv[0] = "./grep"
-     *   argv[1] = palabra a buscar
-     *   argv[2] = primer archivo  (puede haber más)
-     *
-     * Si argc < 3, imprime en stderr:
-     *   "Uso: ./grep <palabra> <archivo1> [archivo2 ...]\n"
-     * y retorna 1.
-     *
-     * Calcula n_arch = argc - 2  (cantidad de archivos).
-     * Si n_arch > MAX_HILOS, imprime error y retorna 1.
-     *
-     * ~8 líneas de código.
-     */
-
+    if (argc < 3){
+        printf("Uso: ./grep <palabra> <archivo1> [archivo2 ...]\n");
+        return 1;
+    }
     const char *palabra = argv[1];
     int         n_arch  = argc - 2;
+    if (n_arch > MAX_HILOS){
+        printf("error\n");
+        return 1;
+    }
 
-    /* ── TODO-2: Crear el pipe ───────────────────────────────────────
-     *
-     * Declara:   int fds[2];
-     * Llama a:   pipe(fds);
-     *
-     * Si pipe() retorna -1, usa perror("pipe") y retorna 1.
-     * Convención que usarás en todo el programa:
-     *   fds[0] = extremo de LECTURA   (lo usa el monitor)
-     *   fds[1] = extremo de ESCRITURA (lo usan los hilos)
-     *
-     * ~4 líneas de código.
-     */
+    // le puse mario al pipe por que mario es un fontanero xd 
+    int mario[2];
+    if (pipe(mario) == -1){
+        perror("pipe");
+        return 1;
+    }
 
-    /* ── TODO-3: fork() — crear el proceso monitor ───────────────────
-     *
-     * Llama a fork().
-     * Si retorna -1: perror("fork") y retorna 1.
-     *
-     * PROCESO HIJO  (fork() retorna 0):
-     *   - Cierra fds[1]  (el hijo no escribe al pipe)
-     *   - Llama a ejecutar_monitor(fds[0])
-     *   - Llama a exit(0)
-     *
-     * PROCESO PADRE (fork() retorna > 0):
-     *   - Cierra fds[0]  (el padre no lee del pipe)
-     *   - Continúa con el resto de main()
-     *
-     * ~12 líneas de código.
-     */
-
+    pid_t id;
+    id = fork();
+    if(id == -1){
+        perror("fork");
+        return -1;
+    }
+    else if (id == 0){
+        close(mario[1]);
+    }
+    else{
+        close(mario[0]);
+    }
+    
     /* ── TODO-4: Inicializar la estructura compartida ────────────────
      *
      * Declara:   Resultado res;
